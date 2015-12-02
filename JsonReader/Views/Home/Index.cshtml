@@ -1,0 +1,45 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+@* Table element: Will use to populate and display *@
+<div class="table-responsive" id="myTableDiv">
+<table id="myTable" class="table display">
+    <thead>
+        <tr>
+            <th>Client</th>
+            <th>Job Number</th>
+            <th>Job Name</th>
+            <th>Due</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+</div>
+
+@section scripts{
+<script type="text/javascript">
+    //On document ready, use ajax call to controller to find and extract data from the file
+    $(document).ready(function () {
+
+        $.ajax({
+            type: 'GET',
+            url: '/home/GetJobs',
+            dataType: 'json',
+            success: function (data) {
+                //return json objects from controller
+                var len = data.length;
+                //loop through objects and add to table, appending to end of the table
+                for (var i = 0; i < len; i++) {
+                    var job = data[i];
+                    var jobRow = "<tr><td>" + job["Client"] + "</td><td>" + job['JobNumber'] + "</td><td>" + job["JobName"] + "</td><td>" + new Date(parseInt(job["Due"].substr(6))) + "</td><td>" + job["Status"] + "</td></tr>";
+                    $('#myTable > tbody:last-child').append(jobRow);
+                }
+                //use jquery library DataTable.js to make html table into searchable table with paging
+                $("#myTable").dataTable();
+            }
+        });
+    })
+</script>
+    }
